@@ -1,0 +1,116 @@
+---
+import { TbSmartHome } from "react-icons/tb";
+import { TbUser } from "react-icons/tb";
+---
+
+<aside
+  class="md:h-screen sticky top-0 flex justify-between items-center md:flex-col px-4 py-4 md:py-9 md:px-9 bg-white"
+>
+  <!-- LOGO -->
+  <div>
+    <img src="/Logo.svg" alt="jorge logo" class="w-[24] h-[24px] md:w-[42px] md:h-[42px]" />
+  </div>
+  <!-- ICONS -->
+  <div id="icons" class="hidden md:flex-col mx-auto gap-4">
+    <TbSmartHome
+      class:list={["transition-all transition transition-opacity duration-300"]}
+      size={30}
+    />
+    <TbUser class:list={["transition-all duration-300"]} size={30} />
+  </div>
+  <!-- PAGE NUMBER -->
+  <div class="flex flex-col items-center gap-5 w-fit">
+    <div class="hidden md:block h-[40px] w-[2px] bg-black"></div>
+    <span id="page-number-text" class="font-mochiy text-lg font-medium">01</span>
+    <div class="hidden md:block h-[40px] w-[2px] bg-black"></div>
+  </div>
+</aside>
+
+<script>
+  function detectCurrentSection() {
+    const sections = document.querySelectorAll("section"); // Suponiendo que tus secciones estén dentro de elementos <section>
+    let currentPage = 1;
+
+    sections.forEach((section, index) => {
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+
+      if (window.scrollY >= sectionTop && window.scrollY < sectionBottom) {
+        currentPage = index + 1;
+      }
+    });
+
+    return currentPage;
+  }
+
+  // Función para actualizar el número de página
+  function updatePageNumber() {
+    const pageNumberElement = document.getElementById("page-number-text");
+    const currentPage = detectCurrentSection();
+    pageNumberElement.textContent = currentPage.toString().padStart(2, "0");
+  }
+  // Función para mostrar los iconos cuando el usuario haya pasado la mitad de la primera sección al hacer scroll hacia abajo
+  function showIconsOnScroll() {
+    const firstSection = document.querySelector("section:first-of-type");
+    const aside = document.querySelector("aside");
+    const icons = document.getElementById("icons");
+
+    if (firstSection) {
+      const sectionTop = firstSection.offsetTop;
+      const sectionHeight = firstSection.offsetHeight;
+      const windowHeight = window.innerHeight;
+      const scrollPosition = window.scrollY;
+
+      // Calcular la posición en la que se deben mostrar los iconos
+      const showIconPosition = sectionTop + sectionHeight / 2;
+
+      if (scrollPosition > showIconPosition) {
+        icons.classList.remove("hidden");
+        icons.classList.add("flex");
+      } else {
+        icons.classList.add("hidden");
+      }
+    }
+  }
+
+  function highlightIcons() {
+    const sections = document.querySelectorAll("section"); // Suponiendo que tus secciones estén dentro de elementos <section>
+    const icons = document.getElementById("icons");
+
+    sections.forEach((section, index) => {
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+      const windowHeight = window.innerHeight;
+      const scrollPosition = window.scrollY;
+
+      if (
+        scrollPosition >= sectionTop + section.offsetHeight / 2 - windowHeight / 2 &&
+        scrollPosition < sectionBottom
+      ) {
+        // Resaltar el ícono correspondiente a la sección actual
+        const iconToHighlight = icons.children[index];
+        if (iconToHighlight) {
+          iconToHighlight.classList.add("text-red-500");
+        }
+      } else {
+        // Remover el resaltado de los íconos de otras secciones
+        const iconToUnhighlight = icons.children[index];
+        if (iconToUnhighlight) {
+          iconToUnhighlight.classList.remove("text-red-500");
+        }
+      }
+    });
+  }
+
+  // Escuchador de eventos para actualizar el número de página al desplazar la página
+  window.addEventListener("scroll", () => {
+    updatePageNumber();
+    highlightIcons();
+    showIconsOnScroll();
+  });
+
+  // Llama a la función inicialmente para mostrar el número de página al cargar la página
+  highlightIcons();
+  updatePageNumber();
+  showIconsOnScroll();
+</script>

@@ -1,0 +1,64 @@
+---
+import { FaGithub } from "react-icons/fa";
+---
+
+<section id="hero" class="bg-white h-screen flex flex-col md:flex-row w-full">
+  <!-- LEFT SIDE OF HERO -->
+  <div class="w-[50%] flex flex-col h-full justify-between">
+    <!-- BODY -->
+    <div class="mx-auto my-auto">
+      <div>
+        <p class="font-zipper text-end font-bold text-4xl text-mainblue">Jorge Oviedo.</p>
+        <p class="font-zipper font-bold text-5xl">Web Developer</p>
+      </div>
+      <div class="flex justify-between items-start mt-2">
+        <a
+          href="https://github.com/jorgeoviedo"
+          style={{ writingMode: "vertical-rl" }}
+          class="border-2 border-mainblue p-2"
+          ><FaGithub size={24} class:list={["text-mainblue"]} /></a
+        >
+        <a
+          style={{ writingMode: "vertical-rl" }}
+          class="border-2 border-black p-2 font-sora text-xl font-bold">About</a
+        >
+        <a
+          style={{ writingMode: "vertical-rl" }}
+          class="border-2 border-black p-2 font-sora text-xl font-bold">Projects</a
+        >
+        <a
+          style={{ writingMode: "vertical-rl" }}
+          class="border-2 border-black p-2 font-sora text-xl font-bold">Get in touch</a
+        >
+        <a
+          style={{ writingMode: "vertical-rl" }}
+          class="border-2 border-black p-2 font-sora text-xl font-bold">Curriculum</a
+        >
+        <a
+          style={{ writingMode: "vertical-rl" }}
+          href="https://www.linkedin.com/in/jorgeoviedo/"
+          class="border-2 border-black p-2 font-sora text-xl font-bold">LinkedIn</a
+        >
+      </div>
+    </div>
+    <!-- FOOTER  -->
+    <div class="flex items-center pb-9 pl-9 mr-5">
+      <div class="p-12 border-[3px] border-black flex items-center justify-center mx-auto">
+        <p class="font-sora font-bold text-3xl uppercase">About me</p>
+      </div>
+    </div>
+  </div>
+  <!-- MIDDLE OF HERO -->
+  <div class="w-[25%]">
+    <img src="/heroimg.png" width={454} height={808} alt="Hero Img" class="h-full w-full" />
+  </div>
+  <!-- RIGHT SIDE OF HERO -->
+  <div class="w-[25%]">
+    <p
+      class="hidden md:block font-zipper text-[150px] mx-auto text-center h-full font-medium"
+      style={{ writingMode: "vertical-rl" }}
+    >
+      PORTFOLIO
+    </p>
+  </div>
+</section>

@@ -1,0 +1,132 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { supabase } from "../../../lib/supabase";
+import Modal from "../../../components/Modal";
+
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+
+if (!accessToken || !refreshToken) {
+  return redirect("/signin");
+}
+
+const { data, error } = await supabase.auth.setSession({
+  refresh_token: refreshToken.value,
+  access_token: accessToken.value,
+});
+
+if (error) {
+  cookies.delete("sb-access-token", {
+    path: "/",
+  });
+  cookies.delete("sb-refresh-token", {
+    path: "/",
+  });
+
+  return redirect("/signin");
+}
+
+const projects = await supabase.from("projects").select();
+---
+
+<Layout title="Edit Projects">
+  <a href="/dashboard" class="text-xl font-bold block text-center">Back to Dashboard</a>
+  <div class="overflow-auto">
+    <table class="table-fixed mx-auto">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3"> ID</th>
+          <th scope="col" class="px-6 py-3"> Title</th>
+          <th scope="col" class="px-6 py-3"> Description</th>
+          <th scope="col" class="px-6 py-3"> Technologies</th>
+          <th scope="col" class="px-6 py-3"> Features</th>
+          <th scope="col" class="px-6 py-3"> URL</th>
+          <th scope="col" class="px-6 py-3"> Github</th>
+          <th scope="col" class="px-6 py-3"> Image</th>
+          <th scope="col" class="px-6 py-3"> Edit</th>
+          <th scope="col" class="px-6 py-3"> Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          projects.data?.map((project) => (
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 text-white">
+              <td
+                scope="row"
+                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              >
+                {project.id}
+              </td>
+              <td class="px-6 py-4">{project.title}</td>
+              <td class="px-6 py-4">{project.description}</td>
+              <td class="px-6 py-4">
+                <ul>
+                  {project.technologies.map((technology) => (
+                    <li>• {technology}</li>
+                  ))}
+                </ul>
+              </td>
+              <td class="px-6 py-4">
+                <ul>
+                  {project.features.map((feature) => (
+                    <li>• {feature}</li>
+                  ))}
+                </ul>
+              </td>
+              <td class="px-6 py-4">{project.url}</td>
+              <td class="px-6 py-4">{project.github}</td>
+              <td class="px-6 py-4">
+                <Modal client:load image={project.image}>
+                  <div>
+                    <p>Update Image for {project.title}, it takes 3600 seconds.</p>
+                    <form
+                      method="POST"
+                      action="/api/projects/updateimage"
+                      enctype="multipart/form-data"
+                    >
+                      <input type="text" hidden name="title" value={project.title} />
+                      <input type="file" name="image" id="image" accept="image/webp" />
+                      <button
+                        class="bg-green-500 hover:bg-green-700 mt-2 text-white block mx-auto font-bold py-2 px-4 rounded-full"
+                        type="submit"
+                      >
+                        Update
+                      </button>
+                    </form>
+                  </div>
+                </Modal>
+              </td>
+              <td class="px-6 py-4">
+                <a
+                  class="bg-blue-600 hover:bg-blue-800 text-white block text-md py-2 px-4 rounded-lg"
+                  href={`/dashboard/edit/${project.id}`}
+                >
+                  Edit
+                </a>
+              </td>
+              <td class="px-6 py-4">
+                <Modal text="Delete" client:load>
+                  <div>
+                    <p>Are you sure you want to delete {project.title}?</p>
+                    <form method="POST" action="/api/projects/delete">
+                      <input type="hidden" name="id" value={project.id} />
+                      <input type="hidden" name="title" value={project.title} />
+                      <button
+                        class="bg-red-500 hover:bg-red-700 mt-2 text-white block mx-auto font-bold py-2 px-4 rounded-full"
+                        type="submit"
+                      >
+                        Yes, Delete
+                      </button>
+                    </form>
+                  </div>
+                </Modal>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</Layout>
